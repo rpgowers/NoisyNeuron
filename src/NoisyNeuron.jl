@@ -7,7 +7,7 @@ using Parameters, Random
   N::Int64
 end
 
-include("point_models.jl")
+include("point-models.jl")
 
 export TimeAxis
 
