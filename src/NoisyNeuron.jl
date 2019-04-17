@@ -8,6 +8,7 @@ using Parameters, Random
 end
 
 include("point-models.jl")
+include("cable-models.jl")
 
 export TimeAxis
 
