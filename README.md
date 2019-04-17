@@ -5,6 +5,8 @@
 # NoisyNeuron
 Simulator package of single neurons subject to stochastic drive.
 
-So far, one can only simulate point neurons when subjected to steady synaptic drive, current modulation, and variance modulation.
+One can simulate point neurons when subjected to steady synaptic drive, current modulation, and variance modulation.
 
-Cell parameters for the point neuron are entered with PointNeuron(E_L,τ_v).
+One can also simulate a sealed cable with steady synaptic drive.
+
+Cell parameters for the point neuron are entered with PointNeuron(τ_v) and for a cable with Neurite(τ_v,λ,M,dx).
