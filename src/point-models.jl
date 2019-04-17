@@ -1,4 +1,4 @@
-export PointNeuron, WhiteSteady, WhiteCmod, WhiteVmod, point_white_steady_test, point_white_cmod_test, point_white_vmod_test
+export PointNeuron, WhiteSteady, WhiteCmod, WhiteVmod
 
 @with_kw struct PointNeuron
   τ_v::Float64 # membrane time constant, ms	
@@ -54,6 +54,7 @@ function point_white_vtime(N_args::PointNeuron, I_args::DriveParams, T::TimeAxis
   t = range(0,step=dt,length=N)
   return t.*τ_v, V
 end
+export point_white_vtime
 
 function point_white_steady_test()
   T = TimeAxis(dt = 0.05, N = 1000)
@@ -62,6 +63,7 @@ function point_white_steady_test()
   @time t, V = point_white_vtime(example, drive, T; seed = 1000)
   return t, V
 end
+export point_white_steady_test
 
 function point_white_cmod_test()
   T = TimeAxis(dt = 0.05, N = 1000)
@@ -70,6 +72,7 @@ function point_white_cmod_test()
   @time t, V = point_white_vtime(example, drive, T; seed = 1000)
   return t, V
 end
+export point_white_cmod_test
 
 function point_white_vmod_test()
   T = TimeAxis(dt = 0.05, N = 1000)
@@ -78,3 +81,4 @@ function point_white_vmod_test()
   @time t, V = point_white_vtime(example, drive, T; seed = 1000)
   return t, V
 end
+export point_white_vmod_test
