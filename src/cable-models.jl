@@ -7,6 +7,12 @@ export Neurite, WhiteSteadyDist, ColourSteadyDist
   dx::Float64 # spatial step size
 end
 
+function x_axis(args_N::Neurite)
+  @unpack M,dx = args_N
+  x = 0.5*dx:dx:M*dx
+end
+export x_axis
+
 abstract type DriveParams end
 
 @with_kw struct WhiteSteadyDist <: DriveParams
@@ -19,6 +25,14 @@ end
   σ_s::Float64
   τ_s::Float64
 end
+
+function sealed_white_steady_var(N_args::Neurite, I_args::DriveParams, x)
+  @unpack λ,M,dx = N_args
+  @unpack σ_w = I_args
+  L = M*dx
+  return 2*cosh.((L.-x)./λ).*cosh.(x./λ)/sinh(L/λ)
+end
+export sealed_white_steady_var
 
 function sealed_white_steady_var(N_args::Neurite, I_args::DriveParams, T::TimeAxis; seed=0)
   if seed != 0
@@ -82,11 +96,13 @@ end
 export sealed_colour_steady_var
 
 function sealed_white_steady_var_test()
-  T = TimeAxis(dt = 1/500, N = 10000)
+  T = TimeAxis(dt = 1/500, N = 100000)
   example = Neurite(τ_v = 10.0,λ=200,M=50,dx=20)
   drive = WhiteSteadyDist(μ=5.0,σ_w = 1.0)
-  @time Var = sealed_white_steady_var(example, drive, T; seed=1000)
-  return Var
+  @time Var_sim = sealed_white_steady_var(example, drive, T; seed=1000)
+  x = x_axis(example)
+  Var_th = sealed_white_steady_var(example,drive,x)
+  return Var_sim,Var_th,x
 end
 export sealed_white_steady_var_test
 

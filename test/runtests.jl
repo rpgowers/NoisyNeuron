@@ -9,6 +9,6 @@ println("Let's test things")
 end
 
 @testset "cable" begin
-  @test typeof(sealed_white_steady_var_test()) == Array{Float64,1}
+  @test length(sealed_white_steady_var_test()) == 3
   @test length(sealed_colour_steady_var_test()) == 2
 end
