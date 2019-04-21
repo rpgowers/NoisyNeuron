@@ -31,24 +31,24 @@ function cfunc(x,ζ,L,λ)
   return (2/a)*cosh((L-x)*a/λ)*cosh(x*a/λ)/sinh(L*a/λ)
 end
 
-function sealed_white_steady_var(N_args::Neurite, I_args::DriveParams, x)
+function sealed_steady_var(N_args::Neurite, I_args::WhiteSteadyDist, x)
   @unpack λ,M,dx = N_args
   @unpack σ_w = I_args
   L = M*dx
   return σ_w^2 .* cfunc.(x,0,L,λ)
 end
-export sealed_white_steady_var
+export sealed_steady_var
 
-function sealed_colour_steady_var(N_args::Neurite, I_args::DriveParams, x)
+function sealed_steady_var(N_args::Neurite, I_args::ColourSteadyDist, x)
   @unpack λ,M,dx,τ_v = N_args
   @unpack σ_s,τ_s = I_args
   α_s = τ_s/τ_v
   L = M*dx
   return σ_s^2*α_s.*(cfunc.(x,0,L,λ).-cfunc.(x,1/α_s,L,λ))
 end
-export sealed_colour_steady_var
+export sealed_steady_var
 
-function sealed_colour_steady_dvar(N_args::Neurite, I_args::DriveParams, x)
+function sealed_steady_dvar(N_args::Neurite, I_args::ColourSteadyDist, x)
   @unpack λ,M,dx,τ_v = N_args
   @unpack σ_s,τ_s = I_args
   α_s = τ_s/τ_v
@@ -57,7 +57,7 @@ function sealed_colour_steady_dvar(N_args::Neurite, I_args::DriveParams, x)
 end
 export sealed_colour_steady_dvar
 
-function sealed_white_steady_var(N_args::Neurite, I_args::DriveParams, T::TimeAxis; seed=0)
+function sealed_steady_var(N_args::Neurite, I_args::WhiteSteadyDist, T::TimeAxis; seed=0)
   if seed != 0
     Random.seed!(seed)
   end
@@ -81,9 +81,9 @@ function sealed_white_steady_var(N_args::Neurite, I_args::DriveParams, T::TimeAx
   end
   return V2_sum/N
 end
-export sealed_white_steady_var
+export sealed_steady_var
 
-function sealed_colour_steady_var(N_args::Neurite, I_args::DriveParams, T::TimeAxis; seed=0)
+function sealed_steady_var(N_args::Neurite, I_args::ColourSteadyDist, T::TimeAxis; seed=0)
   if seed != 0
     Random.seed!(seed)
   end
@@ -116,15 +116,15 @@ function sealed_colour_steady_var(N_args::Neurite, I_args::DriveParams, T::TimeA
   end
   return V2_sum/N, dV2_sum/N
 end
-export sealed_colour_steady_var
+export sealed_steady_var
 
 function sealed_white_steady_var_test()
   T = TimeAxis(dt = 1/500, N = 5000000)
   example = Neurite(τ_v = 10.0,λ=200,M=50,dx=20)
   drive = WhiteSteadyDist(μ=5.0,σ_w = 1.5)
-  @time Var_sim = sealed_white_steady_var(example, drive, T; seed=1000)
+  @time Var_sim = sealed_steady_var(example, drive, T; seed=1000)
   x = x_axis(example)
-  Var_th = sealed_white_steady_var(example,drive,x)
+  Var_th = sealed_steady_var(example,drive,x)
   return Var_sim,Var_th,x
 end
 export sealed_white_steady_var_test
@@ -133,10 +133,10 @@ function sealed_colour_steady_var_test()
   T = TimeAxis(dt = 1/500, N = 5000000)
   example = Neurite(τ_v = 10.0,λ=200,M=50,dx=20)
   drive = ColourSteadyDist(μ=5.0,σ_s = 1.5,τ_s=5.0)
-  @time Var_sim, dVar_sim = sealed_colour_steady_var(example, drive, T; seed=1000)
+  @time Var_sim, dVar_sim = sealed_steady_var(example, drive, T; seed=1000)
   x = x_axis(example)
-  Var_th = sealed_colour_steady_var(example,drive,x)
-  dVar_th = sealed_colour_steady_dvar(example,drive,x)
+  Var_th = sealed_steady_var(example,drive,x)
+  dVar_th = sealed_steady_dvar(example,drive,x)
   return Var_sim, dVar_sim, Var_th, dVar_th, x
 end
 export sealed_colour_steady_var_test
